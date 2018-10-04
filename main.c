@@ -11,7 +11,7 @@ char** StrFilt(char** str, int num_lines, int* num_of_correct_strs){
     *num_of_correct_strs = 0;
     for (int y = 0; y < num_lines; y++) {
         int count = 0;
-        for (int i = 0; i < strlen(*str + y); i++) {
+        for (int i = 0; i < strlen(*(str + y)); i++) {
             if (str[y][i] == '(') {
                 count++;
             }
@@ -23,14 +23,9 @@ char** StrFilt(char** str, int num_lines, int* num_of_correct_strs){
             }
         }
         if (count == 0) {
-            out_of_str[(*num_of_correct_strs)] = *(str + y);
+            memcpy(&out_of_str[(*num_of_correct_strs)], &(*(str + y)), sizeof(*(str + y))+1);
             (*num_of_correct_strs)++;
         }
-        //free(*str);
-        /*if (state != 0) {
-            printf("[error]");
-
-        }*/
     }
     return out_of_str;
 }
@@ -38,17 +33,16 @@ int main(int argc, const char * argv[]) {
     char** tmp_str =  (char**) malloc(num_of_str*sizeof(char*));
     for (int y = 0; y < num_of_str; y++) {
         tmp_str[y] = (char*) malloc(20*sizeof(char));
-        tmp_str[y] = NULL;
+        //tmp_str[y] = "\o";
     }
-    size_t len_str = 0;
+    size_t len_str = 2;
     int num_strings_log = 0;
     for (; ;num_strings_log++) {
-        char tmp_getline = getline(&tmp_str[num_strings_log], &len_str, stdin);
-        if (tmp_getline == 1 && ferror(stdin)) {
+        if (getline(&tmp_str[num_strings_log], &len_str, stdin) == 1 && ferror(stdin)) {
             printf("[error]");
             return 0;
         }
-        if (strcmp(tmp_str[num_strings_log],"\n") == 0) {
+        if (tmp_str[num_strings_log][0] == '\n') {
             break;
         }
     }
